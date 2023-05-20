@@ -1,0 +1,81 @@
+CREATE TABLE IF NOT EXISTS Payments(
+	"transaction" text,
+	request_id text,
+	currency text,
+	provider text,
+	amount int,
+	payment_dt int,
+	bank text,
+	delivery_cost int,
+	goods_total bigint,
+	custom_fee int,
+	PRIMARY KEY("transaction")
+)
+
+CREATE TABLE IF NOT EXISTS Persons(
+	person_id bigserial,
+	"name" text,
+	phone text,
+	zip text,
+	city text,
+	address text,
+	region text,
+	email text,
+	PRIMARY KEY(person_id),
+	unique ("name", phone)
+)
+
+CREATE TABLE IF NOT EXISTS Items(
+	chrt_id bigint,
+	track_number text,
+	price int,
+	rid text,
+	"name" text,
+	sale int,
+	"size" text,
+	total_price bigint,
+	nm_id int,
+	brand text,
+	status int,
+	PRIMARY KEY(chrt_id)
+)
+
+CREATE TABLE IF NOT EXISTS Orders(
+	order_id text,
+	track_number text,
+	entry text,
+	locale varchar(32),
+	internal_signature text,
+	customer_id text,
+	delivery_service text,
+	shardkey text,
+	sm_id bigint,
+	date_created timestamp,
+	oof_shard text,
+	delivery bigint,
+	payment text,
+	PRIMARY KEY(order_id),
+	CONSTRAINT fk_delivery
+		FOREIGN KEY(delivery) 
+		REFERENCES Persons(person_id)
+		ON DELETE cascade,
+	CONSTRAINT fk_payment
+		FOREIGN KEY(payment) 
+		REFERENCES Payments("transaction")
+		ON DELETE cascade
+)
+
+CREATE TABLE IF NOT EXISTS OrdersBaskets(
+	record_id bigserial,
+	"order" text,
+	chrt_id bigint,
+	PRIMARY KEY(record_id),
+	CONSTRAINT fk_order
+		FOREIGN KEY("order") 
+		REFERENCES Orders(order_id)
+		ON DELETE cascade,
+	CONSTRAINT fk_item
+		FOREIGN KEY(chrt_id) 
+		REFERENCES Items(chrt_id)
+		ON DELETE cascade
+)
