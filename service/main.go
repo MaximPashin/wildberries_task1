@@ -57,7 +57,7 @@ func sub(eventsChan chan<- []byte) {
 	}
 	sc.Subscribe("foo", func(m *stan.Msg) {
 		eventsChan <- m.Data
-	})
+	}, stan.DurableName("my-durable"))
 }
 
 func get(w http.ResponseWriter, r *http.Request) {

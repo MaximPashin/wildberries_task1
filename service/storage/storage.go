@@ -25,8 +25,12 @@ func (s *Storage) Put(data entity.Order) error {
 	if err != nil {
 		return err
 	}
+	err = s.conn.Write(data)
+	if err != nil {
+		return err
+	}
 	(*s.kv)[data.ID] = data
-	return s.conn.Write(data)
+	return nil
 }
 
 func (s *Storage) Recovery() error {
